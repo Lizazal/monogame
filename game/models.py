@@ -1,11 +1,8 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class UsersInfo(models.Model):
-    username = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
-    password = models.CharField(max_length=30)
+class UsersInfo(AbstractUser):
 
     class Meta:
         verbose_name = "Пользователь"
@@ -31,3 +28,4 @@ class State(models.Model):
 class Result(models.Model):
     user = models.ForeignKey(UsersInfo, on_delete=models.CASCADE)
     monotony = models.BooleanField()
+

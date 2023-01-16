@@ -6,4 +6,5 @@ urlpatterns = [
     path('login/', LoginUser.as_view(), name='login'),  # http://127.0.0.1:8000/login
     path('register/', RegisterUser.as_view(), name='register'),  # http://127.0.0.1:8000/register
     path('monotony_game/', monotony_game_page, name='monotony_game'),  # http://127.0.0.1:8000/monotony_game
+    path('save_data/', save_data, name='save_data'),
 ]

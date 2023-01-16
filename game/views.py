@@ -1,3 +1,6 @@
+import json
+
+from django import http
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -6,6 +9,7 @@ from django.views.generic import CreateView
 from django.urls import reverse_lazy
 
 from .forms import RegisterUserForm, LoginUserForm
+from .models import OperatingAccuracy
 from .utils import *
 
 
@@ -44,3 +48,31 @@ class LoginUser(DataMixin, LoginView):
 
     def get_success_url(self):
         return reverse_lazy('monotony_game')
+
+
+def save_data(request):
+    # 校验登录
+    if not request.user.is_authenticated:
+        return http.JsonResponse({'code': 403, 'errmsg': '用户未登录，前往登录~~'})
+    # 接收参数
+    json_dict = json.loads(request.body.decode())
+    leftAccuracy = json_dict.get('leftAccuracy')
+    middleAccuracy = json_dict.get('middleAccuracy')
+    rightAccuracy = json_dict.get('rightAccuracy')
+    # print(leftAccuracy, middleAccuracy, rightAccuracy)
+
+    # 校验参数
+    if not all([leftAccuracy, middleAccuracy, rightAccuracy]):
+        return http.JsonResponse({'code': 400, 'errmsg': '缺少必传参数'})
+
+    try:  # 成功写入
+        OperatingAccuracy.objects.create(
+            user=request.user,
+            left_accuracy=leftAccuracy,
+            middle_accuracy=middleAccuracy,
+            right_accuracy=rightAccuracy
+        )
+        return http.JsonResponse({'code': 200, 'errmsg': '再玩一盘！！'})
+
+    except:  # 数据库写入异常
+        return http.JsonResponse({'code': 400, 'errmsg': '网络错误，请重试~~'})
