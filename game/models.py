@@ -1,11 +1,17 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django import forms
 
 
-class UsersInfo(models.Model):
-    username = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
-    password = models.CharField(max_length=30)
+class UsersInfo(AbstractUser):
+    username = models.CharField(max_length=50, verbose_name='Логин', unique=True)
+    email = models.CharField(max_length=50, verbose_name='Email', unique=True, default="")
+    first_name = models.CharField(max_length=50, verbose_name='Имя', default="")
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия', default="")
+    password1 = models.CharField(max_length=50, verbose_name='Пароль', default="")
+    password2 = models.CharField(max_length=50, verbose_name='Повтор пароля', default="")
+    sex = models.CharField(max_length=1, choices=(('F', 'Женский'), ('M', 'Мужской ')), default='F', verbose_name='Пол')
+    age = models.PositiveSmallIntegerField(verbose_name='Возраст', default=0)
 
     class Meta:
         verbose_name = "Пользователь"
