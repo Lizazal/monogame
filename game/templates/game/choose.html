@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор</title>
+    <link type="text/css" href="{% static 'game/css/styles.css' %}" rel="stylesheet" />
+    <style>
+        .aligner1 {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 17%;
+        }
+        button{
+            height: 300px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class = "aligner1">
+    <button onclick="location.href = '/choose_train'" >Тренировка</button>
+    <button onclick="location.href = '/choose_game'">Игра</button>
+    </div>
+</body>
+</html>
