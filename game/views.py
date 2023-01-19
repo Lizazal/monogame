@@ -71,10 +71,12 @@ class LoginUser(DataMixin, LoginView):
         return dict(list(context.items()) + list(c_def.items()))
 
     def get_success_url(self):
+<<<<<<< HEAD
         return reverse_lazy('choose')
 
 
 def save_data(request):
+    # 校验登录
     if not request.user.is_authenticated:
         return http.JsonResponse({'code': 403, 'errmsg': '用户未登录，前往登录~~'})
     # 接收参数
