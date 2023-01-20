@@ -18,7 +18,7 @@ const FONT_FAMILY = "system-ui";
 
 const DT = 10; // time interval between frames
 const PERCENT = 0.1; // +percent speed
-const ST = 120000; // time interval to speed-up
+const ST = 10000; // time interval to speed-up
 
 const HINT_KEY = "h";
 
@@ -163,12 +163,12 @@ class Monoring
         context.closePath();
 
         // mean accuracy text
-        var meanAccuracy = this.getMeanAccuracy();
+        this.meanAccuracy = this.getMeanAccuracy();
         context.fillStyle = getRGBAString(this.fontColor, this.totalAlpha);
         context.font = `${this.fontSize}em ${FONT_FAMILY}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(`${(meanAccuracy * 100).toFixed(2)}%`, this.x, this.y + this.radius + this.width * 2.5);
+        context.fillText(`${(this.meanAccuracy * 100).toFixed(2)}%`, this.x, this.y + this.radius + this.width * 2.5);
 
 
         var fontColorRgb = hexToRgb(this.fontColor);
@@ -237,8 +237,12 @@ class Monoring
     }
 
     getMeanAccuracy() {
-        // console.log(this.accuracyHistory.reduce((sum, value) => sum += value, 0) / this.accuracyHistory.length)
-        return (this.accuracyHistory.length == 0) ? 0 : this.accuracyHistory.reduce((sum, value) => sum += value, 0) / this.accuracyHistory.length;
+        var length = this.accuracyHistory.length;
+        if (length == 0) return 0;
+        var pluses = this.accuracyHistory.filter(accuracy => accuracy >= 0).length;
+        var minuses = length - pluses;
+        var sign = pluses > minuses ? 1 : -1;
+        return sign * this.accuracyHistory.reduce((sum, value) => sum += Math.abs(value), 0) / length;
     }
 
 
@@ -339,8 +343,7 @@ function speed_update (monorings, gameState){
         monorings.array.forEach((monoring) => {
                 monoring.speedup();
         });
-        alert("Уровень повышен");
-        level+=1;
+        //alert("Уровень повышен");
     }
 }
 function seconds_count (){
@@ -354,9 +357,10 @@ function seconds_count (){
         level_seconds=0;
         level_minutes+=1;
     }
-    if ((minutes*60+level_seconds)==(ST/1000)){
+    if ((level_minutes*60+level_seconds)==(ST/1000)){
         level_seconds=0;
         level_minutes=0;
+        level+=1;
     }
 }
 
@@ -457,8 +461,8 @@ window.addEventListener("keypress", (event) => {
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
         }
         gameState.gameStarted = true;
+        var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
+        let timer = setInterval(() => seconds_count(), 1000);
     }
 });
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
-var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
-let timer = setInterval(() => seconds_count(), 1000);
