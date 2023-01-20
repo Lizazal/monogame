@@ -14,10 +14,16 @@
         margin: 0 auto;
         width: 100%;
       }
+      .button2 {
+          height: 50px;
+          width: 100px;
+          margin-left: 90%;
+      }
     </style>
   </head>
   <body>
-    <canvas id="canvas" width="3840" height="2160"></canvas>
+    <canvas id="canvas" width="3840" height="1700"></canvas>
     <script type="text/javascript" src={% static "game/js/stress_game.js" %}></script>
+    <button class = "button2" onclick="location.href = '/choose_game'">Назад</button>
   </body>
 </html>

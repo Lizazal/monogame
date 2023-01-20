@@ -7,7 +7,7 @@
         <link type="text/css" href="{% static 'game/css/styles.css' %}" rel="stylesheet" />
     </head>
     <body>
-        <form method="post" class="all-form">
+        <form method="post">
             {% csrf_token %}
 
             <div class="form-error">{{ form.non_field_errors }}</div>
