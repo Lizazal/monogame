@@ -443,7 +443,7 @@ function update(context, monorings, gameState) {
             gameState.allReady = gameState.allReady || monorings.array.every((monoring) => monoring.isReady);
             monorings.array.forEach((monoring) => {
                 monoring.draw();
-                if (monoring.getMeanAccuracy()<0.85 && (minutes*60+seconds>=(ST/1000))){
+                if (monoring.getMeanAccuracy()<0.5 && (minutes*60+seconds>=(ST/1000))){
                     gameState.gameEnded = true;
                     monorings.array.map(monoring => monoring.endAnimation = true);
                 }
@@ -496,6 +496,11 @@ window.addEventListener("keypress", (event) => {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
+            monorings.array.forEach((monoring) => {
+                if (monoring.getMeanAccuracy()<0.5) {
+                    // dont't save data
+                }
+            });
         }
         gameState.gameStarted = true;
         var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
