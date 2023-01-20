@@ -18,7 +18,7 @@ const {canvas, context} = getCanvas();
 const PI = Math.PI;
 const TWOPI = 2 * PI;
 const CENTER_X = canvas.width / 2;
-const CENTER_Y = canvas.height / 2;
+const CENTER_Y = 200 + canvas.height / 2;
 
 const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
@@ -28,6 +28,8 @@ const DT = 10; // time interval between frames
 const HINT_KEY = "h";
 
 // ------------------------------------------------
+var seconds = 0;
+var minutes = 0;
 
 
 function getRandomAngle() {
@@ -327,7 +329,13 @@ class Monoring
             this.animationHintKeyDown = false;
     }
 }
-
+function seconds_count (){
+    seconds+=1;
+    if (seconds==60){
+        seconds=0;
+        minutes+=1;
+    }
+}
 function update(context, monorings, gameState) {
     context.fillStyle = BACKGROUND_COLOR;
     context.beginPath();
@@ -418,8 +426,7 @@ function update(context, monorings, gameState) {
             context.fillText("Удерживайте 'h' для подсказки", 20, 50);
             context.fillStyle = `#333`;
             context.fillText("Нажмите 's' для остановки игры", 20, 150);
-            context.fillStyle = `#333`;
-            context.fillText("lzlzlz", 20, 250);
+            context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
         }
     }
 }
@@ -457,3 +464,4 @@ window.addEventListener("keypress", (event) => {
 });
 
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
+let timer = setInterval(() => seconds_count(), 1000);

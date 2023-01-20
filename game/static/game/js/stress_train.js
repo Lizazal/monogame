@@ -11,17 +11,23 @@ const {canvas, context} = getCanvas();
 const PI = Math.PI;
 const TWOPI = 2 * PI;
 const CENTER_X = canvas.width / 2;
-const CENTER_Y = canvas.height / 2;
+const CENTER_Y = 200 + canvas.height / 2;
 
 const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
 
 const DT = 10; // time interval between frames
+const PERCENT = 0.1; // +percent speed
+const ST = 120000; // time interval to speed-up
 
 const HINT_KEY = "h";
 
 // ------------------------------------------------
-
+var seconds = 0;
+var minutes = 0;
+var level_minutes = 0;
+var level_seconds = 0;
+var level = 0;
 
 function getRandomAngle() {
     return Math.random() * TWOPI;
@@ -227,11 +233,17 @@ class Monoring
         context.shadowBlur = 0;
         context.shadowOffsetX = 0;
         context.shadowOffsetY = 0;
+
     }
 
     getMeanAccuracy() {
         // console.log(this.accuracyHistory.reduce((sum, value) => sum += value, 0) / this.accuracyHistory.length)
         return (this.accuracyHistory.length == 0) ? 0 : this.accuracyHistory.reduce((sum, value) => sum += value, 0) / this.accuracyHistory.length;
+    }
+
+
+    speedup() {
+        this.angularSpeed = this.angularSpeed+this.angularSpeed*PERCENT;
     }
 
     update() {
@@ -321,6 +333,33 @@ class Monoring
     }
 }
 
+
+function speed_update (monorings, gameState){
+    if (gameState.gameStarted){
+        monorings.array.forEach((monoring) => {
+                monoring.speedup();
+        });
+        alert("Уровень повышен");
+        level+=1;
+    }
+}
+function seconds_count (){
+    seconds+=1;
+    if (seconds==60){
+        seconds=0;
+        minutes+=1;
+    }
+    level_seconds+=1;
+    if (level_seconds==60){
+        level_seconds=0;
+        level_minutes+=1;
+    }
+    if ((minutes*60+level_seconds)==(ST/1000)){
+        level_seconds=0;
+        level_minutes=0;
+    }
+}
+
 function update(context, monorings, gameState) {
     context.fillStyle = BACKGROUND_COLOR;
     context.beginPath();
@@ -358,6 +397,7 @@ function update(context, monorings, gameState) {
                 context.fillText("Точность справа", 3*CENTER_X/2, CENTER_Y/4);
                 context.fillText(`${rightAccuracy}%`, 3*CENTER_X/2, CENTER_Y/2);
                 clearInterval(mainInterval);
+                clearInterval(speedInterval);
                 console.log(leftAccuracy)
                 console.log(middleAccuracy)
                 console.log(rightAccuracy);
@@ -381,6 +421,9 @@ function update(context, monorings, gameState) {
             context.fillText("Удерживайте 'h' для подсказки", 20, 50);
             context.fillStyle = `#333`;
             context.fillText("Нажмите 's' для остановки игры", 20, 150);
+            context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
+            context.fillText(`С начала уровня прошло: ${level_minutes}:${level_seconds}`, 20, 350);
+            context.fillText(`Текущий уровень: ${level}`, 20, 450);
         }
     }
 }
@@ -416,5 +459,6 @@ window.addEventListener("keypress", (event) => {
         gameState.gameStarted = true;
     }
 });
-
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
+var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
+let timer = setInterval(() => seconds_count(), 1000);

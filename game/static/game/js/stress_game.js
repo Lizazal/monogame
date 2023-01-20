@@ -28,6 +28,11 @@ const DT = 10; // time interval between frames
 const HINT_KEY = "h";
 
 // ------------------------------------------------
+var seconds = 0;
+var minutes = 0;
+var level_minutes = 0;
+var level_seconds = 0;
+var level = 0;
 
 
 function getRandomAngle() {
@@ -241,6 +246,10 @@ class Monoring
         return (this.accuracyHistory.length == 0) ? 0 : this.accuracyHistory.reduce((sum, value) => sum += value, 0) / this.accuracyHistory.length;
     }
 
+    speedup() {
+        this.angularSpeed = this.angularSpeed+this.angularSpeed*PERCENT;
+    }
+
     update() {
         var dt = DT * 1e-3;
 
@@ -328,6 +337,32 @@ class Monoring
     }
 }
 
+function speed_update (monorings, gameState){
+    if (gameState.gameStarted){
+        monorings.array.forEach((monoring) => {
+                monoring.speedup();
+        });
+        alert("Уровень повышен");
+        level+=1;
+    }
+}
+function seconds_count (){
+    seconds+=1;
+    if (seconds==60){
+        seconds=0;
+        minutes+=1;
+    }
+    level_seconds+=1;
+    if (level_seconds==60){
+        level_seconds=0;
+        level_minutes+=1;
+    }
+    if ((minutes*60+level_seconds)==(ST/1000)){
+        level_seconds=0;
+        level_minutes=0;
+    }
+}
+
 function update(context, monorings, gameState) {
     context.fillStyle = BACKGROUND_COLOR;
     context.beginPath();
@@ -342,6 +377,7 @@ function update(context, monorings, gameState) {
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
         context.fillText(`Нажимайте '${monorings.left.key}' для кружка слева, '${monorings.middle.key}' для кружка по центру и '${monorings.right.key}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
+        context.fillText(`Игра остановится при достижении 85% ошибок хотя бы у одного кружка`, CENTER_X, 12*CENTER_Y/6);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -403,6 +439,10 @@ function update(context, monorings, gameState) {
             gameState.allReady = gameState.allReady || monorings.array.every((monoring) => monoring.isReady);
             monorings.array.forEach((monoring) => {
                 monoring.draw();
+                if (monoring.lastAccuracy<0.85 && (minutes*60+seconds>=120)){
+                    gameState.gameEnded = true;
+                    monorings.array.map(monoring => monoring.endAnimation = true);
+                }
                 if (gameState.allReady) {
                     monoring.update();
                 } else {
@@ -418,6 +458,9 @@ function update(context, monorings, gameState) {
             context.fillText("Удерживайте 'h' для подсказки", 20, 50);
             context.fillStyle = `#333`;
             context.fillText("Нажмите 's' для остановки игры", 20, 150);
+            context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
+            context.fillText(`С начала уровня прошло: ${level_minutes}:${level_seconds}`, 20, 350);
+            context.fillText(`Текущий уровень: ${level}`, 20, 450);
         }
     }
 }
@@ -455,3 +498,5 @@ window.addEventListener("keypress", (event) => {
 });
 
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
+var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
+let timer = setInterval(() => seconds_count(), 1000);
