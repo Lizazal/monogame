@@ -14,7 +14,31 @@ from .utils import *
 
 
 def monotony_game_page(request):
-    return render(request, 'game/game.html')
+    return render(request, 'game/monotony_game.html')
+
+
+def choose_page(request):
+    return render(request, 'game/choose.html')
+
+
+def choose_train_page(request):
+    return render(request, 'game/choose_train.html')
+
+
+def choose_game_page(request):
+    return render(request, 'game/choose_game.html')
+
+
+def monotony_train_page(request):
+    return render(request, 'game/monotony_train.html')
+
+
+def stress_train_page(request):
+    return render(request, 'game/stress_train.html')
+
+
+def stress_game_page(request):
+    return render(request, 'game/stress_game.html')
 
 
 def page_not_found(request, exception):
@@ -34,7 +58,7 @@ class RegisterUser(DataMixin, CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('monotony_game')
+        return redirect('choose')
 
 
 class LoginUser(DataMixin, LoginView):
@@ -47,7 +71,7 @@ class LoginUser(DataMixin, LoginView):
         return dict(list(context.items()) + list(c_def.items()))
 
     def get_success_url(self):
-        return reverse_lazy('monotony_game')
+        return reverse_lazy('choose')
 
 
 def save_data(request):
