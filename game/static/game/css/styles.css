@@ -1,19 +1,19 @@
 html, body {
 	font-family: Arial, serif;
 	color: #444;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
 }
 
 .centered{
 	text-align: center;
     vertical-align: middle;
 }
-.all-form {
-    box-sizing: border-box;
-}
 .form-input {
     width: 300px;
     font-size: 16px;
-    text-align: center;
 }
 
 .form-label {
@@ -25,10 +25,26 @@ html, body {
 .form-error ul {
     list-style: none;
     color: #CC0000;
-	text-align: center;
+    padding: 0;
 }
 
 .form-button {
     min-width: 200px;
     font-size: 16px;
+}
+
+.aligner1 {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10%;
+}
+.button1{
+    height: 300px;
+    width: 300px;
+}
+.button2 {
+  height: 50px;
+  width: 100px;
+  margin-left: 90%;
+  margin-bottom: 0;
 }
