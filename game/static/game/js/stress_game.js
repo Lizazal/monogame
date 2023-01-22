@@ -24,6 +24,8 @@ const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
 
 const DT = 10; // time interval between frames
+const PERCENT = 0.1; // +percent speed
+const ST = 10000; // time interval to speed-up
 
 const HINT_KEY = "h";
 
@@ -346,8 +348,6 @@ function speed_update (monorings, gameState){
         monorings.array.forEach((monoring) => {
                 monoring.speedup();
         });
-        alert("Уровень повышен");
-        level+=1;
     }
 }
 function seconds_count (){
@@ -361,9 +361,10 @@ function seconds_count (){
         level_seconds=0;
         level_minutes+=1;
     }
-    if ((minutes*60+level_seconds)==(ST/1000)){
+    if ((level_minutes*60+level_seconds)==(ST/1000)){
         level_seconds=0;
         level_minutes=0;
+        level+=1;
     }
 }
 
@@ -381,7 +382,7 @@ function update(context, monorings, gameState) {
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
         context.fillText(`Нажимайте '${monorings.left.key}' для кружка слева, '${monorings.middle.key}' для кружка по центру и '${monorings.right.key}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
-        context.fillText(`Игра остановится при достижении 85% ошибок хотя бы у одного кружка`, CENTER_X, 6*CENTER_Y/6);
+        context.fillText(`Ига остановится при достижении 85% ошибок хотя бы у одного кружка`, CENTER_X, 6*CENTER_Y/6);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -496,6 +497,7 @@ window.addEventListener("keypress", (event) => {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
+            clearInterval(timer);
             monorings.array.forEach((monoring) => {
                 if (monoring.getMeanAccuracy()<0.5) {
                     // dont't save data
