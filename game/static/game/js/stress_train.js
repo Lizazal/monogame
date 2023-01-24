@@ -466,6 +466,7 @@ window.addEventListener("keypress", (event) => {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
+            clearInterval(timer);
         }
         gameState.gameStarted = true;
         var speedInterval = setInterval(() => speed_update(monorings, gameState), ST);
