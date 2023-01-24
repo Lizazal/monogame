@@ -440,7 +440,7 @@ function update(context, monorings, gameState) {
             context.font = `4em ${FONT_FAMILY}`;
             context.textAlign = 'left';
             context.textBaseline = 'middle';
-            context.fillText("Удерживайте 'h' для подсказки", 20, 50);
+            context.fillText("Удерживайте 'c' для подсказки", 20, 50);
             context.fillStyle = `#333`;
             context.fillText("Нажмите 's' для остановки игры", 20, 150);
             context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
