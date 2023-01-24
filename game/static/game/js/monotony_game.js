@@ -478,15 +478,10 @@ window.addEventListener("keypress", (event) => {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
-            monorings.array.forEach((monoring) => {
-                if (minutes<40) {
-                    // dont't save data
-                }
-            });
+            clearInterval(timer);
         }
         gameState.gameStarted = true;
         let timer = setInterval(() => seconds_count(), 1000);
     }
 });
-
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
