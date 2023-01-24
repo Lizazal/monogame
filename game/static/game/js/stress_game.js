@@ -141,21 +141,21 @@ class Monoring
 
         window.addEventListener('keypress', (event) => {
             if (event.defaultPrevented) return;
-            if (this.key.includes(event.key)) {
+            if (this.key.includes(event.key) && !(gameState.gameEnded)) {
                 this.calculateAccuracy();
             }
         });
 
         window.addEventListener('keydown', (event) => {
             if (event.defaultPrevented) return;
-            if (HINTS.includes(event.key)) {
+            if (HINTS.includes(event.key) && !(gameState.gameEnded)) {
                 this.onHintKeyDown();
             }
         });
 
         window.addEventListener('keyup', (event) => {
             if (event.defaultPrevented) return;
-            if (HINTS.includes(event.key)) {
+            if (HINTS.includes(event.key) && !(gameState.gameEnded)) {
                 this.onHintKeyUp();
             }
         });
