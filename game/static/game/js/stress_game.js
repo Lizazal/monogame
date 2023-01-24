@@ -382,7 +382,7 @@ function update(context, monorings, gameState) {
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
         context.fillText(`Нажимайте '${monorings.left.key}' для кружка слева, '${monorings.middle.key}' для кружка по центру и '${monorings.right.key}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
-        context.fillText(`Игра остановится при достижении 50% ошибок хотя бы у одного кружка`, CENTER_X, 6*CENTER_Y/6);
+        context.fillText(`Игра остановится при достижении 85% ошибок хотя бы у одного кружка`, CENTER_X, 6*CENTER_Y/6);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -408,12 +408,19 @@ function update(context, monorings, gameState) {
                 clearInterval(mainInterval);
                 console.log(leftAccuracy)
                 console.log(middleAccuracy)
-                console.log(rightAccuracy)
+                let s = seconds - 2
+                console.log(`${minutes}:${s}`)
+                let OperatingTime = `${minutes}:${s}`
+                if(minutes < 40){
+                    minutes = ''
+                }
                 // 提交数据
                 let data = {
                         leftAccuracy: leftAccuracy,
                         middleAccuracy: middleAccuracy,
-                        rightAccuracy: rightAccuracy
+                        rightAccuracy: rightAccuracy,
+                        OperatingTime: OperatingTime,
+                        stress: 'stress',
                     }
                 axios.post('/save_data/', data, {
                         headers: {

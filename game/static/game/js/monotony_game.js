@@ -382,11 +382,18 @@ function update(context, monorings, gameState) {
                 console.log(leftAccuracy)
                 console.log(middleAccuracy)
                 console.log(rightAccuracy)
+                let s = seconds - 4
+                console.log(`${minutes}:${s}`)
+                let OperatingTime = `${minutes}:${s}`
+                if(minutes < 40){
+                    minutes = ''
+                }
                 // 提交数据
                 let data = {
                         leftAccuracy: leftAccuracy,
                         middleAccuracy: middleAccuracy,
-                        rightAccuracy: rightAccuracy
+                        rightAccuracy: rightAccuracy,
+                        OperatingTime: OperatingTime,
                     }
                 axios.post('/save_data/', data, {
                         headers: {
@@ -468,10 +475,11 @@ window.addEventListener("keypress", (event) => {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
-            clearInterval(timer);
-            if (minutes<40) {
+            monorings.array.forEach((monoring) => {
+                if (minutes<40) {
                     // dont't save data
-            }
+                }
+            });
         }
         gameState.gameStarted = true;
         let timer = setInterval(() => seconds_count(), 1000);
