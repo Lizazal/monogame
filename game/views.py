@@ -9,7 +9,7 @@ from django.views.generic import CreateView
 from django.urls import reverse_lazy
 
 from .forms import RegisterUserForm, LoginUserForm
-from .models import OperatingAccuracy
+from .models import OperatingAccuracy, UsersInfo
 from .utils import *
 
 
@@ -83,20 +83,60 @@ def save_data(request):
     leftAccuracy = json_dict.get('leftAccuracy')
     middleAccuracy = json_dict.get('middleAccuracy')
     rightAccuracy = json_dict.get('rightAccuracy')
-    # print(leftAccuracy, middleAccuracy, rightAccuracy)
+    OperatingTime = json_dict.get('OperatingTime')
+    stress = json_dict.get('stress')
+    # print(leftAccuracy, middleAccuracy, rightAccuracy, OperatingTime)
 
     # 校验参数
-    if not all([leftAccuracy, middleAccuracy, rightAccuracy]):
+    if not all([leftAccuracy, middleAccuracy, rightAccuracy, OperatingTime]):
         return http.JsonResponse({'code': 400, 'errmsg': '缺少必传参数'})
 
+    if (eval(leftAccuracy) > 0 and eval(middleAccuracy) > 0) \
+            or (eval(rightAccuracy) > 0 and eval(middleAccuracy) > 0) \
+            or (eval(rightAccuracy) > 0 and eval(leftAccuracy) > 0):
+        advantage = '+'
+    else:
+        advantage = '-'
+
     try:  # 成功写入
-        OperatingAccuracy.objects.create(
+        ope = OperatingAccuracy.objects.create(
             user=request.user,
             left_accuracy=leftAccuracy,
             middle_accuracy=middleAccuracy,
-            right_accuracy=rightAccuracy
+            right_accuracy=rightAccuracy,
+            advantage=advantage,
         )
-        return http.JsonResponse({'code': 200, 'errmsg': '再玩一盘！！'})
+        # 判断操作时间
+        minutes = OperatingTime.split(':')[0]
+        s = OperatingTime.split(':')[1]
+        # stress有值则为stress_game
+        if stress:
+            total_time = eval(minutes) * 60 + eval(s)
+            level = str(total_time / 120)
+            ope.level = level
+            ope.save()
+            ope.operatingtime_set.create(
+                user=request.user,
+                time=f'{minutes}分{s}秒',
+
+            )
+
+        else:
+            if minutes != '0':
+                ope.operatingtime_set.create(
+                    user=request.user,
+                    time=f'{minutes}分{s}秒'
+                )
+
+        return http.JsonResponse({'code': 200, 'errmsg': 'играть снова！！'})
 
     except:  # 数据库写入异常
-        return http.JsonResponse({'code': 400, 'errmsg': '网络错误，请重试~~'})
+        return http.JsonResponse({'code': 400, 'errmsg': 'Ошибка сети, попробуйте еще раз~~'})
+
+
+def info_game(request):
+    user = UsersInfo.objects.get(username=request.user.username)
+
+    operatings = OperatingAccuracy.objects.filter(user=request.user)
+
+    return render(request, 'game/info_game.html', locals())

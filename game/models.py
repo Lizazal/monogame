@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django import forms
 
 
 class UsersInfo(AbstractUser):
@@ -24,6 +23,14 @@ class OperatingAccuracy(models.Model):
     left_accuracy = models.FloatField()
     middle_accuracy = models.FloatField()
     right_accuracy = models.FloatField()
+    advantage = models.CharField(max_length=50, default="")
+    level = models.CharField(max_length=50, default="")
+
+
+class OperatingTime(models.Model):
+    user = models.ForeignKey(UsersInfo, on_delete=models.CASCADE)
+    time = models.CharField(max_length=50, default="")
+    operate = models.ForeignKey(OperatingAccuracy, on_delete=models.CASCADE)
 
 
 class State(models.Model):
