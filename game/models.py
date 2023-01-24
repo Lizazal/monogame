@@ -10,7 +10,7 @@ class UsersInfo(AbstractUser):
     password1 = models.CharField(max_length=50, verbose_name='Пароль', default="")
     password2 = models.CharField(max_length=50, verbose_name='Повтор пароля', default="")
     sex = models.CharField(max_length=1, choices=(('F', 'Женский'), ('M', 'Мужской ')), default='F', verbose_name='Пол')
-    age = models.PositiveSmallIntegerField(verbose_name='Возраст', default=0)
+    age = models.PositiveSmallIntegerField(verbose_name='Возраст', default=20)
 
     class Meta:
         verbose_name = "Пользователь"
