@@ -429,12 +429,11 @@ window.addEventListener("keypress", (event) => {
     if (sKey.includes(event.key)) {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
-            clearInterval(timer);
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
+            clearInterval(timer);
         }
         gameState.gameStarted = true;
         let timer = setInterval(() => seconds_count(), 1000);
     }
 });
-
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
