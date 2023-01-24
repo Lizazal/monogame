@@ -18,7 +18,7 @@ const {canvas, context} = getCanvas();
 const PI = Math.PI;
 const TWOPI = 2 * PI;
 const CENTER_X = canvas.width / 2;
-const CENTER_Y = canvas.height / 2;
+const CENTER_Y = 200 + canvas.height / 2;
 
 const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
