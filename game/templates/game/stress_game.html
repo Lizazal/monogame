@@ -1,29 +1,35 @@
-{%  load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="utf-8"/>
     <title>Игра: Психоэмоциональное напряжение</title>
+    <script type="text/javascript" src={% static "game/vue/vue.js" %}></script>
+    <script type="text/javascript" src={% static "game/vue/axios.min.js" %}></script>
+
     <style>
-      * {
-        padding: 0;
-        margin: 0;
-      }
-      canvas {
-        display: block;
-        margin: 0 auto;
-        width: 100%;
-      }
-      .button2 {
-          height: 50px;
-          width: 100px;
-          margin-left: 90%;
-      }
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .button2 {
+            height: 50px;
+            width: 100px;
+            margin-left: 90%;
+        }
     </style>
-  </head>
-  <body>
-    <canvas id="canvas" width="3840" height="1700"></canvas>
-    <script type="text/javascript" src={% static "game/js/stress_game.js" %}></script>
-    <button class = "button2" onclick="location.href = '/choose_game'">Назад</button>
-  </body>
+</head>
+<body>
+<canvas id="canvas" width="3840" height="1700"></canvas>
+<script type="text/javascript" src={% static "game/js/stress_game.js" %}></script>
+<button class="button2" onclick="location.href = '/choose_game'">Назад</button>
+<button class="button2" style="margin-top: 20px" onclick="location.href = '/info_game'">информация об игроке</button>
+</body>
 </html>
