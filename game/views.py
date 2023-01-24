@@ -1,7 +1,7 @@
 import json
 
 from django import http
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotFound
@@ -140,3 +140,7 @@ def info_game(request):
     operatings = OperatingAccuracy.objects.filter(user=request.user)
 
     return render(request, 'game/info_game.html', locals())
+
+def logout_user (request):
+    logout(request)
+    return redirect('login')
