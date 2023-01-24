@@ -11,9 +11,9 @@
     <div>
         <p>Имя：{{ user.username }}</p>
         {% if user.sex == F %}
-            <p>Пол：Женский</p>
+            <p>Пол：женский</p>
         {% else %}
-            <p>Пол：мужчина</p>
+            <p>Пол：мужской</p>
         {% endif %}
         <p>возраст：{{ user.age }} лет</p>
         <p>Почта：{{ user.email }}</p>
@@ -21,7 +21,7 @@
 
     {% for operating in operatings %}
         <div class="operating">
-            <div>Эксплуатационные данные：</div>
+            <div>Данные об игре：</div>
             <p>{{ operating.left_accuracy }}</p>
             <p>{{ operating.middle_accuracy }}</p>
             <p>{{ operating.right_accuracy }}</p>
