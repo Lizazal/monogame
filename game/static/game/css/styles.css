@@ -67,6 +67,15 @@ html, body {
 }
 
 
+.button3{
+  height: 50px;
+  width: 100px;
+  margin-bottom: 0;
+}
+.aligner2 {
+    display: flex;
+    justify-content: end;
+}
 
 
 
