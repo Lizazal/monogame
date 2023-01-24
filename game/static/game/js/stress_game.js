@@ -514,5 +514,4 @@ window.addEventListener("keypress", (event) => {
         let timer = setInterval(() => seconds_count(), 1000);
     }
 });
-
 var mainInterval = setInterval(() => update(context, monorings, gameState), DT);
