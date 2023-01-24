@@ -1,16 +1,17 @@
 html, body {
-	font-family: Arial, serif;
-	color: #444;
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	width: 100%;
+    font-family: Arial, serif;
+    color: #444;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
 
-.centered{
-	text-align: center;
+.centered {
+    text-align: center;
     vertical-align: middle;
 }
+
 .form-input {
     width: 300px;
     font-size: 16px;
@@ -38,13 +39,53 @@ html, body {
     justify-content: space-around;
     margin-top: 10%;
 }
-.button1{
+
+.button1 {
     height: 300px;
     width: 300px;
 }
+
 .button2 {
-  height: 50px;
-  width: 100px;
-  margin-left: 90%;
-  margin-bottom: 0;
+    height: 50px;
+    width: 100px;
+    margin-left: 90%;
+    margin-bottom: 0;
 }
+
+.info {
+    padding: 0 120px;
+}
+
+.operating {
+    display: flex;
+    align-items: center;
+    background-color: antiquewhite;
+}
+
+.operating p {
+    margin-left: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
