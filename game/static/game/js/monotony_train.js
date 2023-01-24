@@ -18,7 +18,7 @@ const FONT_FAMILY = "system-ui";
 
 const DT = 10; // time interval between frames
 
-const HINT_KEY = "h";
+const HINTS = ["c", "C", "с", "С"];
 
 // ------------------------------------------------
 var seconds = 0;
@@ -129,21 +129,21 @@ class Monoring
 
         window.addEventListener('keypress', (event) => {
             if (event.defaultPrevented) return;
-            if (event.key == this.key) {
+            if (this.key.includes(event.key)) {
                 this.calculateAccuracy();
             }
         });
 
         window.addEventListener('keydown', (event) => {
             if (event.defaultPrevented) return;
-            if (event.key == HINT_KEY) {
+            if (HINTS.includes(event.key)) {
                 this.onHintKeyDown();
             }
         });
 
         window.addEventListener('keyup', (event) => {
             if (event.defaultPrevented) return;
-            if (event.key == HINT_KEY) {
+            if (HINTS.includes(event.key)) {
                 this.onHintKeyUp();
             }
         });
@@ -177,7 +177,7 @@ class Monoring
             context.font = `${this.fontSize}em ${FONT_FAMILY}`;
             context.textAlign = 'center';
             context.textBaseline = 'middle';
-            context.fillText(`${this.key}`, this.x, this.y - this.radius - this.width * 2);
+            context.fillText(`${this.key[0]}`, this.x, this.y - this.radius - this.width * 2);
         }
 
         if (this.animateAccuracy) {
@@ -346,7 +346,7 @@ function update(context, monorings, gameState) {
         context.textBaseline = 'middle';
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
-        context.fillText(`Нажимайте '${monorings.left.key}' для кружка слева, '${monorings.middle.key}' для кружка по центру и '${monorings.right.key}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
+        context.fillText(`Нажимайте '${monorings.left.key[0]}' для кружка слева, '${monorings.middle.key[0]}' для кружка по центру и '${monorings.right.key[0]}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -391,7 +391,7 @@ function update(context, monorings, gameState) {
             context.font = `4em ${FONT_FAMILY}`;
             context.textAlign = 'left';
             context.textBaseline = 'middle';
-            context.fillText("Удерживайте 'h' для подсказки", 20, 50);
+            context.fillText("Удерживайте 'c' для подсказки", 20, 50);
             context.fillStyle = `#333`;
             context.fillText("Нажмите 's' для остановки игры", 20, 150);
             context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
@@ -400,11 +400,15 @@ function update(context, monorings, gameState) {
 }
 
 // --------------------------------------------------------------
+keyLeft = ["q", "Q", "й", "Й"];
+keyMidde = ['w', 'W', 'ц', 'Ц'];
+keyRight = ['e', 'E', 'у', 'У'];
+
 
 //                                           key  x                   y    radius width   ring clr    circle clr  line clr      start angle
-var leftMonoring    = new Monoring(context, "q", CENTER_X/2,       CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
-var middleMonoring  = new Monoring(context, "w", CENTER_X,     3*CENTER_Y/4,   500, 75,    '#3a5f8b',  '#e7706d',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
-var rightMonoring   = new Monoring(context, "e", CENTER_X*3/2,     CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
+var leftMonoring    = new Monoring(context, keyLeft, CENTER_X/2,       CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
+var middleMonoring  = new Monoring(context, keyMidde, CENTER_X,     3*CENTER_Y/4,   500, 75,    '#3a5f8b',  '#e7706d',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
+var rightMonoring   = new Monoring(context, keyRight, CENTER_X*3/2,     CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
 var monorings = {
     left    : leftMonoring,
     middle  : middleMonoring,
@@ -420,11 +424,12 @@ var gameState = {
     allEnded    : false
 }
 console.log(gameState);
-
+sKey = ["s", "S", "ы", "Ы"];
 window.addEventListener("keypress", (event) => {
-    if (event.key == 's') {
+    if (sKey.includes(event.key)) {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
+            clearInterval(timer);
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
         }
         gameState.gameStarted = true;
