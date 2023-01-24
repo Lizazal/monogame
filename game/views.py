@@ -77,7 +77,7 @@ class LoginUser(DataMixin, LoginView):
 def save_data(request):
     # 校验登录
     if not request.user.is_authenticated:
-        return http.JsonResponse({'code': 403, 'errmsg': '用户未登录，前往登录~~'})
+        return http.JsonResponse({'code': 403, 'errmsg': 'Пользователь не авторизован, авторизуйтесь, пожалуйста~~'})
     # 接收参数
     json_dict = json.loads(request.body.decode())
     leftAccuracy = json_dict.get('leftAccuracy')
@@ -89,7 +89,7 @@ def save_data(request):
 
     # 校验参数
     if not all([leftAccuracy, middleAccuracy, rightAccuracy, OperatingTime]):
-        return http.JsonResponse({'code': 400, 'errmsg': '缺少必传参数'})
+        return http.JsonResponse({'code': 400, 'errmsg': 'Отсутствует обязательный параметр'})
 
     if (eval(leftAccuracy) > 0 and eval(middleAccuracy) > 0) \
             or (eval(rightAccuracy) > 0 and eval(middleAccuracy) > 0) \
