@@ -12,6 +12,7 @@ urlpatterns = [
     path('monotony_train/', monotony_train_page, name='monotony_train'),
     path('stress_train/', stress_train_page, name='stress_train'),
     path('stress_game/', stress_game_page, name='stress_game'),
+    path('logout/', logout_user, name='logout'),
 
     path('save_data/', save_data, name='save_data'),   # 保存玩家游戏精准度接口
     path('info_game/', info_game, name='info_game'),
