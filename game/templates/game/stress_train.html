@@ -14,16 +14,23 @@
         margin: 0 auto;
         width: 100%;
       }
-      .button2 {
-          height: 50px;
-          width: 100px;
-          margin-left: 90%;
+      .button3{
+        height: 50px;
+        width: 100px;
+        margin-bottom: 0;
+      }
+      .aligner2 {
+        display: flex;
+        justify-content: end;
       }
     </style>
   </head>
   <body>
     <canvas id="canvas" width="3840" height="1700"></canvas>
     <script type="text/javascript" src={% static "game/js/stress_train.js" %}></script>
-    <button class = "button2" onclick="location.href = '/choose_train'">Назад</button>
+    <div class = "aligner2">
+    <button class = "button3" onclick="location.href = '/choose_train'">Назад</button>
+    <button class = "button3" onclick="location.href = '/logout'">Выйти</button>
+    </div>
   </body>
 </html>
