@@ -10,7 +10,7 @@
 <div class="info">
     <div>
         <p>Имя：{{ user.username }}</p>
-        {% if user.sex == F %}
+        {% if user.sex == "F" %}
             <p>Пол：женский</p>
         {% else %}
             <p>Пол：мужской</p>
@@ -18,21 +18,36 @@
         <p>возраст：{{ user.age }} лет</p>
         <p>Почта：{{ user.email }}</p>
     </div>
-
+    <div>Данные об играх：</div>
+    <table class="operating">
     {% for operating in operatings %}
-        <div class="operating">
-            <div>Данные об игре：</div>
+        <tr>
+        <td>
             <p>{{ operating.left_accuracy }}</p>
+        </td>
+        <td>
             <p>{{ operating.middle_accuracy }}</p>
+        </td>
+        <td>
             <p>{{ operating.right_accuracy }}</p>
-            <p>{{ operating.advantage }}</p>
+        </td>
+        <td>
+            {% if operating.advantage == "+" %}
+                <p>Вы реагировали заранее</p>
+            {% else %}
+                <p>Вы реагировали с запаздыванием</p>
+            {% endif %}
+        </td>
+        <td>
             {% if operating.level %}
                 <p>{{ operating.level }}</p>
             {% else %}
                 <p>Нет данных об уровне</p>
             {% endif %}
-        </div>
+        </td>
+        </tr>
     {% endfor %}
+    </table>
 </div>
     
     <div class = "aligner2">
