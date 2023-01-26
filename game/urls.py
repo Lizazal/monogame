@@ -15,5 +15,7 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
 
     path('save_data/', save_data, name='save_data'),   # 保存玩家游戏精准度接口
-    path('info_game/', info_game, name='info_game'),
+    path('info_game/', info_game, name='info_game'),   # 显示玩家信息接口
+    path('ranking/', ranking, name='ranking'),   # 显示玩家排名接口
+
 ]
