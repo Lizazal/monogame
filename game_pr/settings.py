@@ -114,6 +114,7 @@ AUTH_USER_MODEL = 'game.UsersInfo'
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = []
+LOGIN_URL = "/login/"
 
 
 # Default primary key field type
