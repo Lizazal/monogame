@@ -1,9 +1,9 @@
-
 // 获取cookie
 function getCookie(name) {
     let r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
     return r ? r[1] : undefined;
 }
+
 
 function getCanvas() {
     return {
@@ -22,12 +22,10 @@ const CENTER_Y = 200 + canvas.height / 2;
 
 const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
-
+const FINISH = 40;
 const DT = 10; // time interval between frames
 
 const HINT = "KeyC";
-
-const FINISH = 40; // minutes after game finishes
 
 // ------------------------------------------------
 var seconds = 0;
@@ -138,21 +136,21 @@ class Monoring
 
         window.addEventListener('keypress', (event) => {
             if (event.defaultPrevented) return;
-            if ((this.key=event.code) && !(gameState.gameEnded)) {
+            if ((this.key==event.code) && !(gameState.gameEnded)) {
                 this.calculateAccuracy();
             }
         });
 
         window.addEventListener('keydown', (event) => {
             if (event.defaultPrevented) return;
-            if ((HINT == event.code) && !(gameState.gameEnded)) {
+            if ((HINT==event.code) && !(gameState.gameEnded)) {
                 this.onHintKeyDown();
             }
         });
 
         window.addEventListener('keyup', (event) => {
             if (event.defaultPrevented) return;
-            if ((HINT == event.code) && !(gameState.gameEnded)) {
+            if ((HINT==event.code) && !(gameState.gameEnded)) {
                 this.onHintKeyUp();
             }
         });
@@ -356,6 +354,7 @@ function update(context, monorings, gameState) {
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
         context.fillText(`Нажимайте '${monorings.left.key[3]}' для кружка слева, '${monorings.middle.key[3]}' для кружка по центру и '${monorings.right.key[3]}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
+        context.fillText(`Игра остановится через '${FINISH}' минут.`, CENTER_X, CENTER_Y);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -381,44 +380,43 @@ function update(context, monorings, gameState) {
                 clearInterval(mainInterval);
                 console.log(leftAccuracy)
                 console.log(middleAccuracy)
-                console.log(rightAccuracy)
+                console.log(rightAccuracy);
                 let s = seconds - 4
-                console.log(`${minutes}:${s}`)
-                let OperatingTime = `${minutes}:${s}`
-                if(minutes < 40){
-                    minutes = ''
-                }
-                // 提交数据
-                let data = {
-                        leftAccuracy: leftAccuracy,
-                        middleAccuracy: middleAccuracy,
-                        rightAccuracy: rightAccuracy,
-                        OperatingTime: OperatingTime,
+                    console.log(`${minutes}:${s}`)
+                    let OperatingTime = `${minutes}:${s}`
+                    if(minutes < 40){
+                        minutes = ''
                     }
-                axios.post('/save_data/', data, {
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                    })
-                        .then(response => {
-                    // 获取响应数据
-                    const data = response.data;
-                    if (data.code === 200) {
-                        // 数据记录成功
-                        alert(data.errmsg)
-                        location.reload()
-                    } else {
-                        // 失败
-                        if(data.code === 403){ // 未登录
-                            alert(data.errmsg)
-                            location.href = 'http://127.0.0.1:8000/login'
-                        } else {  // 非法请求
+                    // 提交数据
+                    let data = {
+                            leftAccuracy: leftAccuracy,
+                            middleAccuracy: middleAccuracy,
+                            rightAccuracy: rightAccuracy,
+                            OperatingTime: OperatingTime,
+                        }
+                    axios.post('/save_data/', data, {
+                            headers: {
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                        })
+                            .then(response => {
+                        // 获取响应数据
+                        const data = response.data;
+                        if (data.code === 200) {
+                            // 数据记录成功
                             alert(data.errmsg)
                             location.reload()
+                        } else {
+                            // 失败
+                            if(data.code === 403){ // 未登录
+                                alert(data.errmsg)
+                                location.href = 'http://127.0.0.1:8000/login'
+                            } else {  // 非法请求
+                                alert(data.errmsg)
+                                location.reload()
+                            }
                         }
-                    }
-                });
-
+                    });
             }
         } else {
             gameState.allReady = gameState.allReady || monorings.array.every((monoring) => monoring.isReady);
@@ -449,6 +447,7 @@ function update(context, monorings, gameState) {
 }
 
 // --------------------------------------------------------------
+
 
 //                                           key  x                   y    radius width   ring clr    circle clr  line clr      start angle
 var leftMonoring    = new Monoring(context, "KeyQ", CENTER_X/2,       CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
