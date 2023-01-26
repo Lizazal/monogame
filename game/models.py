@@ -25,6 +25,7 @@ class OperatingAccuracy(models.Model):
     right_accuracy = models.FloatField()
     advantage = models.CharField(max_length=50, default="")
     level = models.CharField(max_length=50, default="")
+    mean = models.FloatField()
 
 
 class OperatingTime(models.Model):
