@@ -112,6 +112,16 @@ def save_data(request):
     mean = (math.fabs(eval(leftAccuracy)) + math.fabs(eval(middleAccuracy)) + math.fabs(eval(rightAccuracy))) / 3
 
     try:  # 成功写入
+
+        minutes = OperatingTime.split(':')[0]
+        s = OperatingTime.split(':')[1]
+        total_time = eval(minutes) * 60 + eval(s)
+        good = False
+        if stress:
+            if (abs(eval(leftAccuracy)) < 0.75 or abs(eval(middleAccuracy)) < 0.75 or abs(eval(rightAccuracy)) < 0.75) and (total_time>120):
+                good = True
+            if good==False:
+                return http.JsonResponse({'code': 200, 'errmsg': 'Вы можете сыграть ещё раз!'})
         ope = OperatingAccuracy.objects.create(
             user=request.user,
             left_accuracy=leftAccuracy,
@@ -120,10 +130,8 @@ def save_data(request):
             advantage=advantage,
             mean=mean
         )
-        # 判断操作时间
-        minutes = OperatingTime.split(':')[0]
-        s = OperatingTime.split(':')[1]
         # stress有值则为stress_game
+
         if stress:
             total_time = eval(minutes) * 60 + eval(s)
             level = int(total_time / 120)
