@@ -15,7 +15,7 @@ const CENTER_Y = 200 + canvas.height / 2;
 
 const BACKGROUND_COLOR = "#ffffff";
 const FONT_FAMILY = "system-ui";
-
+const FINISH = 40;
 const DT = 10; // time interval between frames
 
 const HINT = "KeyC";
@@ -347,6 +347,7 @@ function update(context, monorings, gameState) {
         context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
         context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
         context.fillText(`Нажимайте '${monorings.left.key[3]}' для кружка слева, '${monorings.middle.key[3]}' для кружка по центру и '${monorings.right.key[3]}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
+        context.fillText(`Игра остановится через '${FINISH}' минут. Играйте до конца, иначе данные не сохранятся`, CENTER_X, CENTER_Y);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -379,6 +380,10 @@ function update(context, monorings, gameState) {
             gameState.allReady = gameState.allReady || monorings.array.every((monoring) => monoring.isReady);
             monorings.array.forEach((monoring) => {
                 monoring.draw();
+                if (minutes*60+seconds>=FINISH){
+                    gameState.gameEnded = true;
+                    monorings.array.map(monoring => monoring.endAnimation = true);
+                }
                 if (gameState.allReady) {
                     monoring.update();
                 } else {
