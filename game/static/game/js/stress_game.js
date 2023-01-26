@@ -1,4 +1,3 @@
-
 // 获取cookie
 function getCookie(name) {
     let r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
@@ -11,6 +10,7 @@ function getCanvas() {
         context: this.canvas.getContext("2d")
     }
 }
+
 const {canvas, context} = getCanvas();
 
 // -------------------------------------------------
@@ -35,6 +35,12 @@ var minutes = 0;
 var level_minutes = 0;
 var level_seconds = 0;
 var level = 0;
+var mean = []
+
+var p_mean = 0;
+var p_mean_level = 0;
+var a_mean = 0;
+var a_mean_level = 0;
 
 
 function getRandomAngle() {
@@ -52,20 +58,20 @@ function normalizeAngle(angle) {
 
 function toRange(value, oldRangeMin, oldRangeMax, newRangeMin, newRangeMax) {
     var newValue = (value - oldRangeMin) * (newRangeMax - newRangeMin) / (oldRangeMax - oldRangeMin) + newRangeMin;
-    return Math.min(Math.max(newValue, newRangeMin) , newRangeMax);
+    return Math.min(Math.max(newValue, newRangeMin), newRangeMax);
 }
 
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
     } : null;
 }
 
-function lerp(start, end, amount){
-    return (1-amount)*start+amount*end
+function lerp(start, end, amount) {
+    return (1 - amount) * start + amount * end
 }
 
 function getRGBAString(hexColor, alpha) {
@@ -73,20 +79,19 @@ function getRGBAString(hexColor, alpha) {
     return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
 }
 
-class Monoring
-{
+class Monoring {
     constructor(
-    context,    // canvas context
-    key,        // keyboard key for current monoring
-    x, y,       // coordinates of center of ring
-    radius, width,
-    ringColor, circleColor, checkLineColor = '#333333',
-    startAngle=PI/2, angularSpeed=0.01,
-    checkLineOffset=15, checkLineWidth=10,
-    circleShadowBlur=7, circleShadowRadius=5, circleWidthOffset=-5,
-    fontColor="#333333", fontSize=10,
-    lastAccuracyPositiveColor="#00cc00", lastAccuracyNegativeColor="#cc0000",
-    fadeAnimationMaxTime=2, accuracyAnimationMaxTime=5, hintAnimationMaxTime=1
+        context,    // canvas context
+        key,        // keyboard key for current monoring
+        x, y,       // coordinates of center of ring
+        radius, width,
+        ringColor, circleColor, checkLineColor = '#333333',
+        startAngle = PI / 2, angularSpeed = 0.01,
+        checkLineOffset = 15, checkLineWidth = 10,
+        circleShadowBlur = 7, circleShadowRadius = 5, circleWidthOffset = -5,
+        fontColor = "#333333", fontSize = 10,
+        lastAccuracyPositiveColor = "#00cc00", lastAccuracyNegativeColor = "#cc0000",
+        fadeAnimationMaxTime = 2, accuracyAnimationMaxTime = 5, hintAnimationMaxTime = 1
     ) {
 
         this.key = key;
@@ -141,21 +146,21 @@ class Monoring
 
         window.addEventListener('keypress', (event) => {
             if (event.defaultPrevented) return;
-            if ((this.key==event.code) && !(gameState.gameEnded)) {
+            if ((this.key == event.code) && !(gameState.gameEnded)) {
                 this.calculateAccuracy();
             }
         });
 
         window.addEventListener('keydown', (event) => {
             if (event.defaultPrevented) return;
-            if ((HINT==event.code) && !(gameState.gameEnded)) {
+            if ((HINT == event.code) && !(gameState.gameEnded)) {
                 this.onHintKeyDown();
             }
         });
 
         window.addEventListener('keyup', (event) => {
             if (event.defaultPrevented) return;
-            if ((HINT==event.code) && !(gameState.gameEnded)) {
+            if ((HINT == event.code) && !(gameState.gameEnded)) {
                 this.onHintKeyUp();
             }
         });
@@ -172,6 +177,7 @@ class Monoring
 
         // mean accuracy text
         this.meanAccuracy = this.getMeanAccuracy();
+        // console.log(this.meanAccuracy)
         context.fillStyle = getRGBAString(this.fontColor, this.totalAlpha);
         context.font = `${this.fontSize}em ${FONT_FAMILY}`;
         context.textAlign = 'center';
@@ -195,7 +201,7 @@ class Monoring
         if (this.animateAccuracy) {
             // last accuracy
             var partTime = this.accuracyAnimationMaxTime / 10;
-            var alpha = (this.accuracyAnimationTime < partTime ) ? lerp(0, 1, this.accuracyAnimationTime/partTime) : lerp(1, 0, (this.accuracyAnimationTime - partTime)/partTime);
+            var alpha = (this.accuracyAnimationTime < partTime) ? lerp(0, 1, this.accuracyAnimationTime / partTime) : lerp(1, 0, (this.accuracyAnimationTime - partTime) / partTime);
 
             context.fillStyle = `rgba(${fontColorRgb.r}, ${fontColorRgb.g}, ${fontColorRgb.b}, ${alpha})`;
             context.font = `${this.fontSize}em ${FONT_FAMILY}`;
@@ -215,8 +221,8 @@ class Monoring
         }
 
         // check line
-        const outerRadius = this.radius + this.width/2 + this.checkLineOffset;
-        const innerRadius = this.radius - this.width/2 - this.checkLineOffset;
+        const outerRadius = this.radius + this.width / 2 + this.checkLineOffset;
+        const innerRadius = this.radius - this.width / 2 - this.checkLineOffset;
         const cosStartAngle = Math.cos(this.startAngle);
         const sinStartAngle = Math.sin(this.startAngle);
         context.strokeStyle = getRGBAString(this.checkLineColor, this.totalAlpha);
@@ -231,11 +237,11 @@ class Monoring
         context.fillStyle = getRGBAString(this.circleColor, this.totalAlpha);
         context.shadowColor = getRGBAString('#333333', this.totalAlpha);
         context.shadowBlur = this.circleShadowBlur;
-        context.shadowOffsetX = this.circleShadowRadius*Math.cos(-this.angle);
-        context.shadowOffsetY = this.circleShadowRadius*Math.sin(-this.angle);
+        context.shadowOffsetX = this.circleShadowRadius * Math.cos(-this.angle);
+        context.shadowOffsetY = this.circleShadowRadius * Math.sin(-this.angle);
         context.beginPath();
-        context.arc(this.radius*Math.cos(this.angle) + this.x, this.radius*Math.sin(this.angle) + this.y,
-                    this.width/2 + this.circleWidthOffset, 0, TWOPI, false);
+        context.arc(this.radius * Math.cos(this.angle) + this.x, this.radius * Math.sin(this.angle) + this.y,
+            this.width / 2 + this.circleWidthOffset, 0, TWOPI, false);
         context.fill();
         context.closePath();
         context.shadowBlur = 0;
@@ -253,7 +259,7 @@ class Monoring
     }
 
     speedup() {
-        this.angularSpeed = this.angularSpeed+this.angularSpeed*PERCENT;
+        this.angularSpeed = this.angularSpeed + this.angularSpeed * PERCENT;
     }
 
     update() {
@@ -319,8 +325,45 @@ class Monoring
             }
             this.accuracyHistory.push(accuracy);
             this.lastAccuracy = accuracy;
-            this.meanAccuracy = this.accuracyHistory.reduce((sum , a) => sum + a, 0) / this.accuracyHistory.length;
+            this.meanAccuracy = this.accuracyHistory.reduce((sum, a) => sum + a, 0) / this.accuracyHistory.length;
             this.startAccuracyAnimation();
+            // 这里对后端进行循环请求计算平均值
+            mean.push(this.meanAccuracy)
+            console.log(this.meanAccuracy)
+            console.log(mean)
+            console.log(seconds)
+            // 提交数据
+            let data = {
+                mean: mean,
+                seconds: seconds,
+            }
+            axios.post('/ranking/', data, {
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+            })
+                .then(response => {
+                    // 获取响应数据
+                    const data = response.data;
+                    if (data.code === 200) {
+                        // 数据记录成功
+                        p_mean = data.data.p_mean;
+                        p_mean_level = data.data.p_mean_level;
+                        a_mean = data.data.a_mean;
+                        a_mean_level = data.data.a_mean_level;
+                    } else {
+                        // 失败
+                        if (data.code === 403) { // 未登录
+                            alert(data.errmsg)
+                            location.href = 'http://127.0.0.1:8000/login'
+                        } else {  // 非法请求
+                            alert(data.errmsg)
+                            location.reload()
+                        }
+                    }
+                });
+
+
         }
     }
 
@@ -343,28 +386,29 @@ class Monoring
     }
 }
 
-function speed_update (monorings, gameState){
-    if (gameState.gameStarted){
+function speed_update(monorings, gameState) {
+    if (gameState.gameStarted) {
         monorings.array.forEach((monoring) => {
-                monoring.speedup();
+            monoring.speedup();
         });
     }
 }
-function seconds_count (){
-    seconds+=1;
-    if (seconds==60){
-        seconds=0;
-        minutes+=1;
+
+function seconds_count() {
+    seconds += 1;
+    if (seconds == 60) {
+        seconds = 0;
+        minutes += 1;
     }
-    level_seconds+=1;
-    if (level_seconds==60){
-        level_seconds=0;
-        level_minutes+=1;
+    level_seconds += 1;
+    if (level_seconds == 60) {
+        level_seconds = 0;
+        level_minutes += 1;
     }
-    if ((level_minutes*60+level_seconds)==(ST/1000)){
-        level_seconds=0;
-        level_minutes=0;
-        level+=1;
+    if ((level_minutes * 60 + level_seconds) == (ST / 1000)) {
+        level_seconds = 0;
+        level_minutes = 0;
+        level += 1;
     }
 }
 
@@ -379,10 +423,11 @@ function update(context, monorings, gameState) {
         context.font = `4em ${FONT_FAMILY}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y/2);
-        context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4*CENTER_Y/6);
-        context.fillText(`Нажимайте '${monorings.left.key[3]}' для кружка слева, '${monorings.middle.key[3]}' для кружка по центру и '${monorings.right.key[3]}' для кружка справа`, CENTER_X, 5*CENTER_Y/6);
-        context.fillText(`Игра остановится при достижении 75% ошибок хотя бы у одного кружка`, CENTER_X, 6*CENTER_Y/6);
+        context.fillText("Нажмите 's' для начала игры", CENTER_X, CENTER_Y / 2);
+        context.fillText("В момент пересечения черты кружком нажимайте на соответствующую клавишу", CENTER_X, 4 * CENTER_Y / 6);
+        context.fillText(`Нажимайте '${monorings.left.key[3]}' для кружка слева, '${monorings.middle.key[3]}' для кружка по центру и '${monorings.right.key[3]}' для кружка справа`, CENTER_X, 5 * CENTER_Y / 6);
+        context.fillText(`Игра остановится при достижении 75% ошибок хотя бы у одного кружка как минимум через 2 минуты после начала игры`, CENTER_X, 6 * CENTER_Y / 6);
+        context.fillText(`Играйте до конца, иначе данные не сохранятся`, CENTER_X, 7*CENTER_Y/6);
     } else {
         if (gameState.gameEnded) {
             gameState.allEnded = gameState.allEnded || monorings.array.every((monoring) => monoring.isEnded);
@@ -399,59 +444,59 @@ function update(context, monorings, gameState) {
                 var leftAccuracy = (monorings.left.getMeanAccuracy() * 100).toFixed(2);
                 var middleAccuracy = (monorings.middle.getMeanAccuracy() * 100).toFixed(2);
                 var rightAccuracy = (monorings.right.getMeanAccuracy() * 100).toFixed(2);
-                context.fillText("Точность слева", CENTER_X/2, CENTER_Y/4);
-                context.fillText(`${leftAccuracy}%`, CENTER_X/2, CENTER_Y/2);
-                context.fillText("Точность по центру", CENTER_X, CENTER_Y/4);
-                context.fillText(`${middleAccuracy}%`, CENTER_X, CENTER_Y/2);
-                context.fillText("Точность справа", 3*CENTER_X/2, CENTER_Y/4);
-                context.fillText(`${rightAccuracy}%`, 3*CENTER_X/2, CENTER_Y/2);
+                context.fillText("Точность слева", CENTER_X / 2, CENTER_Y / 4);
+                context.fillText(`${leftAccuracy}%`, CENTER_X / 2, CENTER_Y / 2);
+                context.fillText("Точность по центру", CENTER_X, CENTER_Y / 4);
+                context.fillText(`${middleAccuracy}%`, CENTER_X, CENTER_Y / 2);
+                context.fillText("Точность справа", 3 * CENTER_X / 2, CENTER_Y / 4);
+                context.fillText(`${rightAccuracy}%`, 3 * CENTER_X / 2, CENTER_Y / 2);
                 clearInterval(mainInterval);
                 console.log(leftAccuracy)
                 console.log(middleAccuracy)
                 let s = seconds - 2
                 console.log(`${minutes}:${s}`)
                 let OperatingTime = `${minutes}:${s}`
-                if(minutes < 40){
+                if (minutes < 40) {
                     minutes = ''
                 }
                 // 提交数据
                 let data = {
-                        leftAccuracy: leftAccuracy,
-                        middleAccuracy: middleAccuracy,
-                        rightAccuracy: rightAccuracy,
-                        OperatingTime: OperatingTime,
-                        stress: 'stress',
-                    }
+                    leftAccuracy: leftAccuracy,
+                    middleAccuracy: middleAccuracy,
+                    rightAccuracy: rightAccuracy,
+                    OperatingTime: OperatingTime,
+                    stress: 'stress',
+                }
                 axios.post('/save_data/', data, {
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                    })
-                        .then(response => {
-                    // 获取响应数据
-                    const data = response.data;
-                    if (data.code === 200) {
-                        // 数据记录成功
-                        alert(data.errmsg)
-                        location.reload()
-                    } else {
-                        // 失败
-                        if(data.code === 403){ // 未登录
-                            alert(data.errmsg)
-                            location.href = 'http://127.0.0.1:8000/login'
-                        } else {  // 非法请求
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                    .then(response => {
+                        // 获取响应数据
+                        const data = response.data;
+                        if (data.code === 200) {
+                            // 数据记录成功
                             alert(data.errmsg)
                             location.reload()
+                        } else {
+                            // 失败
+                            if (data.code === 403) { // 未登录
+                                alert(data.errmsg)
+                                location.href = 'http://127.0.0.1:8000/login'
+                            } else {  // 非法请求
+                                alert(data.errmsg)
+                                location.reload()
+                            }
                         }
-                    }
-                });
+                    });
 
             }
         } else {
             gameState.allReady = gameState.allReady || monorings.array.every((monoring) => monoring.isReady);
             monorings.array.forEach((monoring) => {
                 monoring.draw();
-                if (Math.abs(monoring.getMeanAccuracy())<0.75 && (minutes*60+seconds>=(ST/1000))){
+                if (Math.abs(monoring.getMeanAccuracy()) < 0.75 && (minutes * 60 + seconds >= (ST / 1000))) {
                     gameState.gameEnded = true;
                     monorings.array.map(monoring => monoring.endAnimation = true);
                 }
@@ -473,34 +518,37 @@ function update(context, monorings, gameState) {
             context.fillText(`С начала игры прошло: ${minutes}:${seconds}`, 20, 250);
             context.fillText(`С начала уровня прошло: ${level_minutes}:${level_seconds}`, 20, 350);
             context.fillText(`Текущий уровень: ${level}`, 20, 450);
+            context.fillText(`Рейтинг по полу по всей игре: ${p_mean}`, 2500, 50);
+            context.fillText(`Рейтинг по полу за уровень: ${p_mean_level}`, 2500, 150);
+            context.fillText(`Рейтинг по возрасту по всей игре: ${a_mean}`, 2500, 250);
+            context.fillText(`Рейтинг по возрасту за уровень: ${a_mean_level}`, 2500, 350);
         }
     }
 }
-
 // --------------------------------------------------------------
 
 //                                           key  x                   y    radius width   ring clr    circle clr  line clr      start angle
-var leftMonoring    = new Monoring(context, "KeyQ", CENTER_X/2,       CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
-var middleMonoring  = new Monoring(context, "KeyW", CENTER_X,     3*CENTER_Y/4,   500, 75,    '#3a5f8b',  '#e7706d',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
-var rightMonoring   = new Monoring(context, "KeyE", CENTER_X*3/2,     CENTER_Y,   250, 50,    '#d99694',  '#e46c0a',     '#333333',    getRandomAngle(), getRandomBetween(PI/5, PI/2));
+var leftMonoring = new Monoring(context, "KeyQ", CENTER_X / 2, CENTER_Y, 250, 50, '#d99694', '#e46c0a', '#333333', getRandomAngle(), getRandomBetween(PI / 5, PI / 2));
+var middleMonoring = new Monoring(context, "KeyW", CENTER_X, 3 * CENTER_Y / 4, 500, 75, '#3a5f8b', '#e7706d', '#333333', getRandomAngle(), getRandomBetween(PI / 5, PI / 2));
+var rightMonoring = new Monoring(context, "KeyE", CENTER_X * 3 / 2, CENTER_Y, 250, 50, '#d99694', '#e46c0a', '#333333', getRandomAngle(), getRandomBetween(PI / 5, PI / 2));
 var monorings = {
-    left    : leftMonoring,
-    middle  : middleMonoring,
-    right   : rightMonoring,
-    array   : [leftMonoring, middleMonoring, rightMonoring]
+    left: leftMonoring,
+    middle: middleMonoring,
+    right: rightMonoring,
+    array: [leftMonoring, middleMonoring, rightMonoring]
 }
 monorings.left.fontSize = monorings.right.fontSize = 5;
 
 var gameState = {
-    gameStarted : false,
-    gameEnded   : false,
-    allReady    : false,
-    allEnded    : false
+    gameStarted: false,
+    gameEnded: false,
+    allReady: false,
+    allEnded: false
 }
 console.log(gameState);
 
 window.addEventListener("keypress", (event) => {
-    if (event.code=="KeyS") {
+    if (event.code == "KeyS") {
         if (gameState.gameStarted && gameState.allReady) {
             gameState.gameEnded = true;
             monorings.array.forEach((monoring) => monoring.endAnimation = true);
